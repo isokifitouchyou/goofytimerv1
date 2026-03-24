@@ -24,7 +24,7 @@
 </head>
 <body class="bg-gray-100 min-h-screen text-gray-800 pb-10">
 
-    <div class="max-w-4xl mx-auto p-4 md:p-8">
+    <div class="w-full px-4 py-8 mx-auto">
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
                 <i class="fa-solid fa-plus-circle text-blue-500"></i> Nuevo Temporizador
@@ -59,7 +59,7 @@
             </form>
         </div>
 
-        <div id="timersList" class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8"></div>
+        <div id="timersList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"></div>
         
         <div id="emptyState" class="hidden text-center py-12 text-gray-400 mb-8">
             <i class="fa-regular fa-calendar-times text-6xl mb-4"></i>
@@ -81,7 +81,6 @@
         if (storedData) {
             alarms = JSON.parse(storedData);
         } else {
-            // IDs corregidos: sumamos +1, +2, +3... de forma consistente para evitar duplicados
             const baseTime = Date.now();
             alarms = [
                 { id: baseTime + 1, name: "Trabajar C", time: "08:00", days: [1, 2, 3, 4, 5], createdAt: new Date() },
@@ -98,15 +97,14 @@
         const timersList = document.getElementById('timersList');
         const emptyState = document.getElementById('emptyState');
 
-        // Configuración de Vis.js Timeline
         const container = document.getElementById('visualization');
         const items = new vis.DataSet();
         const options = {
+            height: '400px', // Aumentado el alto del gráfico
             editable: {
                 add: false, remove: false, updateGroup: false, updateTime: true
             },
             onMove: function (item, callback) {
-                // Actualizar el tiempo cuando se suelta en la línea de tiempo
                 const movedDate = new Date(item.start);
                 const h = movedDate.getHours().toString().padStart(2, '0');
                 const m = movedDate.getMinutes().toString().padStart(2, '0');
@@ -128,7 +126,7 @@
                 return {
                     id: alarm.id,
                     content: alarm.name,
-                    start: nextDate || new Date() // Fallback si no hay fecha válida
+                    start: nextDate || new Date()
                 };
             }).filter(item => item.start);
             
@@ -227,7 +225,7 @@
                         </button>
                     </div>
                     <div class="text-center my-2">
-                        <div class="text-4xl font-bold text-blue-600 tracking-wider font-mono countdown-display" id="timer-${alarm.id}">--:--:--</div>
+                        <div class="text-2xl font-bold text-blue-600 tracking-wider font-mono countdown-display" id="timer-${alarm.id}">--:--:--</div>
                         <div class="text-xs text-gray-400 uppercase mt-1" id="label-${alarm.id}">Calculando...</div>
                     </div>
                     <div class="mt-auto border-t pt-2 flex justify-between items-center">
@@ -262,11 +260,11 @@
                 } else {
                     displayEl.innerText = `${h}:${m}:${s}`;
                     if (h === "00" && m < 30) {
-                        displayEl.className = 'text-4xl font-bold text-red-500 tracking-wider font-mono countdown-display';
+                        displayEl.className = 'text-2xl font-bold text-red-500 tracking-wider font-mono countdown-display';
                         labelEl.innerText = "¡Ya casi!";
                         labelEl.className = 'text-xs text-red-400 uppercase mt-1';
                     } else {
-                        displayEl.className = 'text-4xl font-bold text-blue-600 tracking-wider font-mono countdown-display';
+                        displayEl.className = 'text-2xl font-bold text-blue-600 tracking-wider font-mono countdown-display';
                         const isToday = nextDate.getDate() === new Date().getDate();
                         labelEl.innerText = isToday ? "Para hoy" : `Para el ${getDayName(nextDate.getDay())}`;
                         labelEl.className = 'text-xs text-gray-400 uppercase mt-1';
